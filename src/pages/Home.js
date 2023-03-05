@@ -1,5 +1,13 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, TextInput, Platform} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Platform,
+  ScrollView,
+  FlatList,
+} from 'react-native';
 import {Button} from '../components/Button';
 import {SkillCard} from '../components/SkillCard';
 
@@ -7,7 +15,7 @@ export default function Home() {
   const [newSkill, setNewSkill] = useState('');
   const [mySkills, setMySkills] = useState([]);
 
-  /* Utilizar o handle quando a função for disparada pela interação do usuário */
+  /* Use handle to name functions when the function is triggered by user's interaction */
   function handleAddNewSkill() {
     setMySkills(oldState => [...oldState, newSkill]);
   }
@@ -27,9 +35,12 @@ export default function Home() {
 
       <Text style={[styles.title, {marginVertical: 50}]}>My Skills</Text>
 
-      {mySkills.map((skill, index) => (
-        <SkillCard skill={skill} skillIndex={index} />
-      ))}
+      {/* FlatList is utilized when the array is extense, whereas in case of short arrays, ScrollView is more suitable */}
+      <FlatList
+        data={mySkills}
+        keyExtractor={(item, index) => index}
+        renderItem={({item}) => <SkillCard skill={item} />}
+      />
     </View>
   );
 }
