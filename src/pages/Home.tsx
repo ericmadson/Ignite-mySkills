@@ -10,14 +10,24 @@ import {
 import {Button} from '../components/Button';
 import {SkillCard} from '../components/SkillCard';
 
+interface SkillDataProps {
+  id: string;
+  name: string;
+}
+
 export default function Home() {
   const [newSkill, setNewSkill] = useState('');
-  const [mySkills, setMySkills] = useState([]);
+  const [mySkills, setMySkills] = useState<SkillDataProps[]>([]);
   const [greeting, setGreeting] = useState('');
 
   /* Use handle to name functions when the function is triggered by user's interaction */
   function handleAddNewSkill() {
-    setMySkills(oldState => [...oldState, newSkill]);
+    const data = {id: String(new Date().getTime()), name: newSkill};
+    setMySkills(oldState => [...oldState, data]);
+  }
+
+  function handleRemoveSkill(id: string) {
+    setMySkills(oldState => oldState.filter(skill => skill.id !== id));
   }
 
   useEffect(() => {
@@ -46,15 +56,15 @@ export default function Home() {
         onChangeText={setNewSkill}
       />
 
-      <Button onPress={handleAddNewSkill} />
+      <Button title='Add' onPress={handleAddNewSkill} />
 
       <Text style={[styles.title, {marginVertical: 50}]}>My Skills</Text>
 
       {/* FlatList is utilized when the array is extense, whereas in case of short arrays, ScrollView is more suitable */}
       <FlatList
         data={mySkills}
-        keyExtractor={(item, index) => index}
-        renderItem={({item}) => <SkillCard skill={item} />}
+        keyExtractor={(item) => item.id}
+        renderItem={({item}) => <SkillCard skill={item.name} onPress={() => handleRemoveSkill(item.id)} />}
       />
     </View>
   );
@@ -64,8 +74,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#121015',
-    paddingHorizontal: 20,
-    paddingVertical: 50,
+    paddingVertical: 70,
     paddingHorizontal: 30,
   },
   title: {
